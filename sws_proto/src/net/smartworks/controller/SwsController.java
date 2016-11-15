@@ -27,6 +27,7 @@ import net.smartworks.factory.ManagerFactory;
 import net.smartworks.model.TagIndex;
 import net.smartworks.model.Task;
 import net.smartworks.model.TaskCond;
+import net.smartworks.util.CommonUtil;
 import net.smartworks.util.id.IDCreator;
 
 @Controller
@@ -42,6 +43,234 @@ public class SwsController {
 		return resultMap;
     }
 
+	/* 메모 등록 */
+	@RequestMapping(value="/memoInsert", method=RequestMethod.POST)
+	public @ResponseBody Map memoInsert(@RequestBody Map<String, Object> requestBody, HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		Map<String, Object> result = (Map<String, Object>) requestBody;
+		
+		String title = (String)result.get("title");
+		String content = (String)result.get("content");
+		String tag = (String)result.get("tag");
+		//String date = (String)result.get("date");
+		
+		Task task = new Task();
+		
+		task.setObjId(IDCreator.createId("TSK"));
+		task.setTaskType("MEMO");
+		task.setTitle(title);
+		task.setContents(content);
+		task.setTags(tag);
+		task.setCreatedDate(new Date());
+		
+		Task resultTask = ManagerFactory.getInstance().getManager().setTask("", task);
+		
+		Map resultMap = new HashMap();
+		resultMap.put("result", resultTask);
+		
+		return resultMap;
+		
+	}
+	
+	/* todo 등록 */
+	@RequestMapping(value="/todoInsert", method=RequestMethod.POST)
+	public @ResponseBody Map todoInsert(@RequestBody Map<String, Object> requestBody, HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		Map<String, Object> result = (Map<String, Object>) requestBody;
+		
+		String title = (String)result.get("title");
+		String content = (String)result.get("content");
+		String tag = (String)result.get("tag");
+		String done = (String)result.get("done");
+		
+		Task task = new Task();
+		
+		task.setObjId(IDCreator.createId("TSK"));
+		task.setTaskType("TODO");
+		task.setTitle(title);
+		task.setContents(content);
+		task.setTags(tag);
+		task.setCompleteYn(CommonUtil.toBoolean(done));
+		task.setCreatedDate(new Date());
+		
+		Task resultTask = ManagerFactory.getInstance().getManager().setTask("", task);
+		
+		Map resultMap = new HashMap();
+		resultMap.put("result", resultTask);
+		
+		return resultMap;
+		
+	}
+
+	/* 할일 등록 */
+	@RequestMapping(value="/dayworkInsert", method=RequestMethod.POST)
+	public @ResponseBody Map dayworkInsert(@RequestBody Map<String, Object> requestBody, HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		Map<String, Object> result = (Map<String, Object>) requestBody;
+		
+		String title = (String)result.get("title");
+		String content = (String)result.get("content");
+		String tag = (String)result.get("tag");
+		String start = (String)result.get("start");
+		String finish = (String)result.get("finish");
+		
+		Task task = new Task();
+		
+		task.setObjId(IDCreator.createId("TSK"));
+		task.setTaskType("EVENT");
+		task.setTitle(title);
+		task.setContents(content);
+		task.setTags(tag);
+		task.setCreatedDate(new Date());
+		task.setStartDate(new Date());
+		task.setEndDate(new Date());
+		
+		Task resultTask = ManagerFactory.getInstance().getManager().setTask("", task);
+		
+		Map resultMap = new HashMap();
+		resultMap.put("result", resultTask);
+		
+		return resultMap;
+		
+	}
+	
+	/* Memo 가져오기  (ResponseBody 사용)  */
+	@RequestMapping(value="/getMemoList", method=RequestMethod.POST)
+	public @ResponseBody List<Map<String, Object>> getMemoList(HttpServletRequest request, HttpServletResponse response) {
+
+		TaskCond cond = new TaskCond();
+		cond.setTaskType("MEMO");
+		List<Task> tasks = null;
+		try {
+			tasks = ManagerFactory.getInstance().getManager().getTasks("", cond);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (tasks == null || tasks.size() == 0)
+			return null;
+		
+		List<Map<String,Object>> resultData = new ArrayList<Map<String,Object>>();
+		
+		for (int i = 0; i < tasks.size(); i++) {
+			
+			Task task = tasks.get(i);
+			
+			Map<String, Object> data = new HashMap<String,Object>();
+			data.put("title", task.getTitle());
+			data.put("content", task.getContents());
+			data.put("tag", task.getTags());
+			data.put("date", task.getCreatedDate());
+			resultData.add(data);
+		}
+		return resultData;
+	}
+	
+	/* TodoList 가져오기 */
+	@RequestMapping(value="/getTodoList", method=RequestMethod.POST)
+	public @ResponseBody List<Map<String, Object>> getTodoList(HttpServletRequest request, HttpServletResponse response) {
+		
+		TaskCond cond = new TaskCond();
+		cond.setTaskType("TODO");
+		List<Task> tasks = null;
+		try {
+			tasks = ManagerFactory.getInstance().getManager().getTasks("", cond);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (tasks == null || tasks.size() == 0)
+			return null;
+		
+		List<Map<String,Object>> resultData = new ArrayList<Map<String,Object>>();
+		
+		for (int i = 0; i < tasks.size(); i++) {
+			
+			Task task = tasks.get(i);
+			
+			Map<String, Object> data = new HashMap<String,Object>();
+			data.put("title", task.getTitle());
+			data.put("content", task.getContents());
+			data.put("tag", task.getTags());
+			data.put("date", task.getCreatedDate());
+			data.put("done", task.isCompleteYn());
+			resultData.add(data);
+		}
+		return resultData;
+	}
+	
+	/* 할 일 List 가져오기 */
+	@RequestMapping(value="/getDayWorkList", method=RequestMethod.POST)
+	public @ResponseBody List<Map<String, Object>> getDayWorkList(HttpServletRequest request, HttpServletResponse response) {
+		
+		TaskCond cond = new TaskCond();
+		cond.setTaskType("EVENT");
+		List<Task> tasks = null;
+		try {
+			tasks = ManagerFactory.getInstance().getManager().getTasks("", cond);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (tasks == null || tasks.size() == 0)
+			return null;
+		
+		List<Map<String,Object>> resultData = new ArrayList<Map<String,Object>>();
+		
+		for (int i = 0; i < tasks.size(); i++) {
+			
+			Task task = tasks.get(i);
+			
+			Map<String, Object> data = new HashMap<String,Object>();
+			data.put("title", task.getTitle());
+			data.put("content", task.getContents());
+			data.put("tag", task.getTags());
+			data.put("date", task.getCreatedDate());
+			data.put("start", task.getStartDate());
+			data.put("finish", task.getEndDate());
+			resultData.add(data);
+		}
+		return resultData;
+	}
+	
+	/* 검색 (ResponseBody 사용) */ 
+	@RequestMapping(value="/search", method=RequestMethod.POST)
+	public @ResponseBody List<String> search(@RequestBody Map<String, String> requestBody) {
+		
+		String tags = requestBody.get("keyword");
+		List<Task> tasks = null;
+		try {
+			tasks = ManagerFactory.getInstance().getManager().findTaskByTag("", tags);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		List result = new ArrayList();
+		for (int i = 0; i < tasks.size(); i++) {
+			Task task = tasks.get(i);
+			result.add(task.getTitle());
+		}
+		return result;
+	} 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	///////////// 테스트 코드 ///////////////////////
+	
+	
+	
+	
 	@RequestMapping(value="/getList", method=RequestMethod.POST)
 	public @ResponseBody Map getList(@RequestBody Map<String, Object> requestBody, HttpServletRequest request, HttpServletResponse response) throws Exception {
 	
@@ -127,7 +356,7 @@ public class SwsController {
 		
 		String tags = task.getTags();
 		
-		String newTags = tags.replace("#tag", "");
+		String newTags = tags.replace("#hello", "");
 		newTags = newTags.replace("#world", "");
 		
 		task.setTags(newTags);
