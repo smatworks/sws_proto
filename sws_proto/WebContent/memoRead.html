@@ -1,0 +1,18 @@
+
+<div id="memo" class="w3-main" style="margin-left:250px;">
+
+	<header class="w3-container w3-theme w3-padding-64" style="padding-left:32px">
+		<h1 class="w3-xxxlarge w3-padding-16">This is Memo district...</h1>
+	</header>
+
+	<div class="w3-container w3-padding-32" style="padding-left:32px">
+	
+	  <div class="w3-container w3-section w3-border-left w3-pale-red w3-border-red" ng-repeat="memo in memoList">
+	    <p style="padding-top:10px;">title : {{memo.title}}</p> <a href="#memo" style="float:right;"><button class="w3-btn w3-red" ng-click="edit()">Edit</button></a>
+	    <p>content : {{memo.content}}</p>
+	    <p>tag : {{memo.tag}}</p>
+	    <p>date : {{memo.date}}</p>
+	  </div>
+	  
+	</div>
+</div>

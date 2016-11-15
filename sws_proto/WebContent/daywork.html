@@ -1,0 +1,27 @@
+<form name="myForm" novalidate ng-controller="dayworkCtrl" ng-submit="sendDayWork(newDaywork)">
+<div id="daywork" class="w3-main" style="margin-left:250px;">
+
+	<header class="w3-container w3-theme w3-padding-64" style="padding-left:32px">
+		<h1 class="w3-xxxlarge w3-padding-16">This is daywork district...</h1>
+	</header>
+
+	<div class="w3-container w3-padding-32" style="padding-left:32px">
+	
+		<h2 style="float:left;">Write your daywork </h2> <button class="w3-btn w3-teal" style="margin-top:15px; margin-left:50px;" ng-disabled="myForm.$invalid">Send</button>
+		<input class="w3-input" type="text" required ng-model="newDaywork.title">
+		<label class="w3-label w3-validate">Title</label>
+		
+		<input class="w3-input" type="text" required ng-model="newDaywork.content">
+		<label class="w3-label w3-validate">Content</label>
+		
+		<input class="w3-input" type="text" required ng-model="newDaywork.tag">
+		<label class="w3-label w3-validate">Tag</label>
+
+		<input class="w3-input" type="text" required ng-model="newDaywork.start">
+		<label class="w3-label w3-validate">시작일</label>
+		
+		<input class="w3-input" type="text" required ng-model="newDaywork.finish">
+		<label class="w3-label w3-validate">종료일</label>
+		<br>
+	</div>
+</div>

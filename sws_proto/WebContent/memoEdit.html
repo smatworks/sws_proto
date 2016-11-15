@@ -1,0 +1,25 @@
+<form name="myForm" novalidate ng-controller="memoEditCtrl" ng-submit="sendMemo(editMemo)">
+	<div id="memo" class="w3-main" style="margin-left:250px;">
+	
+		<header class="w3-container w3-theme w3-padding-64" style="padding-left:32px">
+			<h1 class="w3-xxxlarge w3-padding-16">This is MemoEdit district...</h1>
+		</header>
+	
+		<div class="w3-container w3-padding-32" style="padding-left:32px">
+		
+			<h2 style="float:left;">Write your important Memo! </h2> <button type="submit" class="w3-btn w3-teal" style="margin-top:15px; margin-left:50px;" ng-disabled="myForm.$invalid">Send</button>
+			<input class="w3-input" type="text" required ng-model="newMemo.title" value="{{memo.title}}">
+			<label class="w3-label w3-validate">Title</label>
+			
+			<input class="w3-input" type="text" required ng-model="newMemo.content" value="{{memo.content}}">
+			<label class="w3-label w3-validate">Content</label>
+			
+			<input class="w3-input" type="text" required ng-model="newMemo.tag" value="{{memo.tag}}">
+			<label class="w3-label w3-validate">Tag</label>
+	
+			<input class="w3-input" type="text" required ng-model="newMemo.date" value="{{memo.date}}">
+			<label class="w3-label w3-validate">Date</label>
+			<br>
+		</div>
+	</div>
+</form>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html ng-app="SWSExample">
+<title>W3.CSS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/sws_proto/angular/angular.js"></script>
+<script src="/sws_proto/angular/angular-route.js"></script>
+<link rel="stylesheet" href="/sws_proto/w3school/w3.css">
+<link rel="stylesheet" href="/sws_proto/w3school/w3-theme-teal.css">
+<link rel="stylesheet" href="/sws_proto/bootstrap/css/bootstrap.css">
+<style>
+	.w3-sidenav a {padding:16px;font-weight:bold}
+</style>
+<script>
+	var myApp = angular.module("SWSExample", ["ngRoute"]);
+
+	myApp.config(function($routeProvider) {								// nav 메뉴별로 페이지 호출 
+	    $routeProvider
+	    .when("/", {
+	    	templateUrl : "main.html",
+	    })
+	    .when("/memo", {
+	        templateUrl : "memo.html",
+	        controller : "memoCtrl"
+	    })
+	    .when("/todo", {
+	        templateUrl : "todo.html",
+	        controller : "todoCtrl"
+	    })
+	    .when("/daywork", {
+	        templateUrl : "daywork.html",
+	        controller : "dayworkCtrl"
+	    })
+		.when("/memoRead", {
+			templateUrl : "memoRead.html",
+			controller : "memoReadCtrl"
+		})
+		.when("/todoRead", {
+			templateUrl : "todoRead.html",
+			controller : "todoReadCtrl"
+		})
+		.when("/dayworkRead", {
+			templateUrl : "dayworkRead.html",
+			controller : "dayworkReadCtrl"
+		})
+		.when("/search", {
+			templateUrl : "search.html",
+			controller : "searchCtrl"
+		})
+		.when("/memoEdit", {
+			templateUrl : "memoEdit.html",
+			controller : "memoEditCtrl"
+		});
+	});
+	
+	myApp.controller("searchCtrl", function($scope, $http) {
+		
+		$scope.search = function(keyword) {												// 검색 
+			console.log("keyword : " + keyword);
+			$http({
+				method : "POST",
+				url : "/sws_proto/search.sw",
+				data : { keyword}															// 이렇게 데이터를 설정하면 서버에서는 '키=keyword, value=keyword의 실제값' 으로 해석함.  (그냥 value만 달랑 넘기는 방법은 주소뒤에 변수를 Parameter값을 붙여서 서버로 던지는 방법이 있다.) 										
+			}).then(function Success(response) {
+				console.log(response);
+				console.log(response.data);
+				$scope.searchResult = response.data;
+			}, function Error(response) {
+				alert("error : " + response);
+			});
+		}
+	});
+
+	myApp.controller("memoCtrl", function($scope, $http) {								// memo 등록 
+		
+		$scope.sendMemo = function(newMemo) {
+			$http({
+				method : "POST",
+				url : "/sws_proto/memoInsert.sw",
+				data : {
+					title : newMemo.title,
+					content : newMemo.content,
+					tag : newMemo.tag,
+					date : newMemo.date
+				}
+			}).then(function Success(response) {
+				alert("success: " + response);
+			}, function Error(response) {
+				alert("error : " + response);
+			});
+		}
+		
+	});
+	
+	myApp.controller("todoCtrl", function($scope, $http) {								// todo 등록 
+		
+		$scope.sendTodo = function(newTodo) {
+			$http({
+				method : "POST",
+				url : "/sws_proto/todoInsert.sw",
+				data : {
+					title : newTodo.title,
+					content : newTodo.content,
+					tag : newTodo.tag,
+					date : newTodo.chkbox
+				}
+			}).then(function Success(response) {
+				alert("success: " + response);
+			}, function Error(response) {
+				alert("error : " + response);
+			});
+		}
+	});
+	
+	myApp.controller("dayworkCtrl", function($scope, $http) {							// 할 일 등록 
+		
+		$scope.sendDayWork = function(newDaywork) {
+			$http({
+				method : "POST",
+				url : "/sws_proto/todoInsert.sw",
+				data : {
+					title : newDaywork.title,
+					content : newDaywork.content,
+					tag : newDaywork.tag,
+					date : newDaywork.start,
+					date2 : newDaywork.finish
+				}
+			}).then(function Success(response) {
+				alert("success: " + response);
+			}, function Error(response) {
+				alert("error : " + response);
+			});
+		}
+	});
+	
+	myApp.controller("memoReadCtrl", function($scope, $http) {
+
+		(function() {
+			$http.post("/sws_proto/getMemoList.sw").success(function (result) {			// memoList 가져오기 
+				$scope.memoList = result;
+			}).error(function(error) {
+				alert("error : " + error);
+			});
+		}());
+	});
+	
+	myApp.controller("todoReadCtrl", function($scope, $http) {
+
+		(function() {
+			$http.post("/sws_proto/getTodoList.sw").success(function (result) {			// todoList 가져오기 
+				$scope.todoList = result;
+			}).error(function(error) {
+				alert("error : " + error);
+			});
+		}());
+	});
+	
+	myApp.controller("dayworkReadCtrl", function($scope, $http) {
+		(function() {
+			$http.post("/sws_proto/getDayWorkList.sw").success(function (result) {		// 할 일 List 가져오기 
+				$scope.dayworkList = result;
+			}).error(function(error) {
+				alert("error : " + error);
+			});
+		}());
+	});
+
+	myApp.controller("memoEditCtrl", function($scope, $http) {
+		(function() {
+			$http.post("/sws_proto/getMemo.sw").success(function (result) {				// 메모 가져오기 
+				$scope.memo = result;
+			}).error(function(error) {
+				alert("error : " + error);
+			});
+		}());
+	});	
+</script>
+<body ng-controller="searchCtrl">
+<nav class="w3-sidenav w3-collapse w3-white w3-animate-left w3-card-2" style="z-index:3;width:250px;" id="mySidenav">
+	<a href="#/" class="w3-border-bottom w3-large"><img src="/sws_proto/image/Smartworks_logo.jpg" style="width:80%;"></a>
+	<a style="color:blue;">W r i t e . . . </a>
+	<a href="#memo">Memo</a>
+	<a href="#todo">Todo</a>
+	<a href="#daywork">일정</a>
+	<a style="color:green;">R e a d . . . </a>
+	<a href="#memoRead">Memo</a>
+	<a href="#todoRead">Todo</a>
+	<a href="#dayworkRead">일정</a>
+	<a style="color:red;">S e a r c h . . . </a>
+	<input type="text" name="recodeId" class="form-control" size="50" placeholder="검색해주세요." ng-model="keyword">
+	<a href="#search">
+		<button type="submit" class="btn btn-danger" style="margin-left:70px;" ng-click="search(keyword)">Search</button>
+	</a>
+</nav>
+
+<div ng-view></div>
+
+</body>
+</html>
+
