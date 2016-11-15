@@ -1,0 +1,15 @@
+<div id="todo" class="w3-main" style="margin-left:250px;">
+
+	<header class="w3-container w3-theme w3-padding-64" style="padding-left:32px">
+		<h1 class="w3-xxxlarge w3-padding-16">This is Todo district...</h1>
+	</header>
+
+	<div class="w3-container w3-padding-32" style="padding-left:32px">
+		<div class="w3-container w3-section w3-border-left w3-pale-green w3-border-red" ng-repeat="todo in todoList">
+		    <p style="padding-top:10px;">title : {{todo.title}}</p> <p style="float:right;"><button class="w3-btn w3-green">Edit</button></p>
+		    <p>content : {{todo.content}}</p>
+		    <p>tag : {{todo.tag}}</p>
+		    <p>Done : {{todo.done}}</p>
+	  </div>
+	</div>
+</div>

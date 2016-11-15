@@ -1,0 +1,16 @@
+<div id="daywork" class="w3-main" style="margin-left:250px;">
+
+	<header class="w3-container w3-theme w3-padding-64" style="padding-left:32px">
+		<h1 class="w3-xxxlarge w3-padding-16">This is daywork district...</h1>
+	</header>
+
+	<div class="w3-container w3-padding-32" style="padding-left:32px">
+		<div class="w3-container w3-section w3-border-left w3-pale-blue w3-border-red" ng-repeat="daywork in dayworkList">
+		    <p style="padding-top:10px;">title : {{daywork.title}}</p> <p style="float:right;"><button class="w3-btn w3-blue">Edit</button></p>
+		    <p>content : {{daywork.content}}</p>
+		    <p>tag : {{daywork.tag}}</p>
+		    <p>start : {{daywork.start}}</p>
+		    <p>finish : {{daywork.finish}}</p>
+		</div>
+	</div>
+</div>
