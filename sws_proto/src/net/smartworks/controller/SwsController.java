@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import net.smartworks.factory.DaoFactory;
 import net.smartworks.factory.ManagerFactory;
+import net.smartworks.model.InsertKeyWordTask;
 import net.smartworks.model.TagIndex;
 import net.smartworks.model.Task;
 import net.smartworks.model.TaskCond;
@@ -62,8 +64,10 @@ public class SwsController {
 		task.setContents(content);
 		task.setTags(tag);
 		task.setCreatedDate(new Date());
-		
-		Task resultTask = ManagerFactory.getInstance().getManager().setTask("", task);
+
+		List<String> keyword = InsertKeyWordTask.getKeyWord(task);								// keyword 추츌 
+		Task resultTask = ManagerFactory.getInstance().getManager().setTask("", task);			// 메모 등록 
+		ManagerFactory.getInstance().getManager().setKeyword(resultTask.getObjId(), keyword);	// keyword 등록 
 		
 		Map resultMap = new HashMap();
 		resultMap.put("result", resultTask);
@@ -93,7 +97,9 @@ public class SwsController {
 		task.setCompleteYn(CommonUtil.toBoolean(done));
 		task.setCreatedDate(new Date());
 		
-		Task resultTask = ManagerFactory.getInstance().getManager().setTask("", task);
+		List<String> keyword = InsertKeyWordTask.getKeyWord(task);								// keyword 추츌 
+		Task resultTask = ManagerFactory.getInstance().getManager().setTask("", task);			// todo 등록
+		ManagerFactory.getInstance().getManager().setKeyword(resultTask.getObjId(), keyword);	// keyword 등록 
 		
 		Map resultMap = new HashMap();
 		resultMap.put("result", resultTask);
@@ -125,7 +131,9 @@ public class SwsController {
 		task.setStartDate(new Date());
 		task.setEndDate(new Date());
 		
-		Task resultTask = ManagerFactory.getInstance().getManager().setTask("", task);
+		List<String> keyword = InsertKeyWordTask.getKeyWord(task);								// keyword 추츌 
+		Task resultTask = ManagerFactory.getInstance().getManager().setTask("", task);			// 할 일 등록 
+		ManagerFactory.getInstance().getManager().setKeyword(resultTask.getObjId(), keyword);	// keyword 등록 
 		
 		Map resultMap = new HashMap();
 		resultMap.put("result", resultTask);
@@ -232,21 +240,32 @@ public class SwsController {
 	
 	/* 검색 (ResponseBody 사용) */ 
 	@RequestMapping(value="/search", method=RequestMethod.POST)
-	public @ResponseBody List<String> search(@RequestBody Map<String, String> requestBody) {
+	public @ResponseBody List<Task> search(@RequestBody Map<String, String> requestBody) {
 		
 		String tags = requestBody.get("keyword");
+		
+		List<Task> taskList = new ArrayList<Task>();
+		taskList = ManagerFactory.getInstance().getManager().getKeyword(tags);					// 키워드에 해당되는 task를 가져온다 
+		
+		return taskList;
+		
+/*
 		List<Task> tasks = null;
 		try {
 			tasks = ManagerFactory.getInstance().getManager().findTaskByTag("", tags);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		List result = new ArrayList();
+		
+		List<String> result = new ArrayList<String>();
+
 		for (int i = 0; i < tasks.size(); i++) {
 			Task task = tasks.get(i);
 			result.add(task.getTitle());
 		}
+	
 		return result;
+*/
 	} 
 	
 	

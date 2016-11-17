@@ -7,6 +7,7 @@
 package net.smartworks.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import net.smartworks.model.Task;
 import net.smartworks.model.TaskCond;
@@ -30,5 +31,8 @@ public interface ISqlDao {
 	public TaskHistory updateTaskHistory(String userId, TaskHistory taskHistory) throws Exception;
 	public void removeTaskHistory(String userId, String objId) throws Exception;
 	public void removeTaskHistoryByTskObjId(String userId, String tskObjId) throws Exception;
+	
+	public void setKeyword(String objId, List<String> keyword);
+	public List<Task> getKeyword(String tags);
 }
 

@@ -59,7 +59,7 @@
 			$http({
 				method : "POST",
 				url : "/sws_proto/search.sw",
-				data : { keyword}															// 이렇게 데이터를 설정하면 서버에서는 '키=keyword, value=keyword의 실제값' 으로 해석함.  (그냥 value만 달랑 넘기는 방법은 주소뒤에 변수를 Parameter값을 붙여서 서버로 던지는 방법이 있다.) 										
+				data : { keyword}														// 이렇게 데이터를 설정하면 서버에서는 '키=keyword, value=keyword의 실제값' 으로 해석함.  (그냥 value만 달랑 넘기는 방법은 주소뒤에 변수를 Parameter값을 붙여서 서버로 던지는 방법이 있다.) 										
 			}).then(function Success(response) {
 				console.log(response);
 				console.log(response.data);
@@ -116,7 +116,7 @@
 		$scope.sendDayWork = function(newDaywork) {
 			$http({
 				method : "POST",
-				url : "/sws_proto/todoInsert.sw",
+				url : "/sws_proto/dayworkInsert.sw",
 				data : {
 					title : newDaywork.title,
 					content : newDaywork.content,

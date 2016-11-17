@@ -57,20 +57,21 @@ public class ManagerImpl implements IManager{
 	}
 	
 	
+	/* MEMO, TODO, EVENT 의 task가 등록된다. */
 	@Override
 	public Task setTask(String userId, Task task) throws Exception {
 
-		Task returnTask = DaoFactory.getInstance().getSqlDao().setTask(userId, task);
+		Task returnTask = DaoFactory.getInstance().getSqlDao().setTask(userId, task);															// postgresql 등록 
 		
 		//tag 테그인덱스를 만든다 
 		try {
-			DaoFactory.getInstance().getNoSqlDao().setTagIndexes(userId, makeTagIndexListByTag(returnTask.getObjId(), returnTask.getTags()));
+			DaoFactory.getInstance().getNoSqlDao().setTagIndexes(userId, makeTagIndexListByTag(returnTask.getObjId(), returnTask.getTags())); 	// mongoDB 등록
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		return returnTask;
-	}
+	}		
 
 	@Override
 	public Task getTask(String userId, String objId) throws Exception {
@@ -217,9 +218,9 @@ public class ManagerImpl implements IManager{
 	@Override
 	public List<Task> findTaskByTag(String userId, String tagStr) throws Exception {
 
-		String[] tagArray = StringUtils.tokenizeToStringArray(tagStr, " ");
+		String[] tagArray = StringUtils.tokenizeToStringArray(tagStr, " ");							
 		
-		for (int i = 0; i < tagArray.length; i++) {
+		for (int i = 0; i < tagArray.length; i++) {														// #(해시태그) 제거해주기
 			String tag = tagArray[i];
 			tag = tag.replace("#", "");
 			tagArray[i] = tag;
@@ -240,9 +241,9 @@ public class ManagerImpl implements IManager{
 			
 			TagIndex tagIndex = result.get(i);
 			String tags = tagIndex.getObjIds();
-			String[] objIds = StringUtils.tokenizeToStringArray(tags, ";");
+			String[] objIds = StringUtils.tokenizeToStringArray(tags, ";");								// 검색한 키워드를 가지고 있는 objId들 추출 
 			
-			List objIdList = Arrays.asList(objIds);
+			List objIdList = Arrays.asList(objIds);											
 			
 			if (resultObjIdList == null) {
 				resultObjIdList = objIdList;
@@ -252,7 +253,7 @@ public class ManagerImpl implements IManager{
 					
 					String objId = (String)objIdList.get(j);
 					
-					if (resultObjIdList.contains(objId)) {
+					if (resultObjIdList.contains(objId)) {												// bug - contains가 제역할을 못해주고 있는것으로 보임. 
 						matchList.add(objId);
 					} else {
 					}
@@ -270,5 +271,34 @@ public class ManagerImpl implements IManager{
 	}
 	
 //	
+	
+	
+	
+	
+	
+	/* MEMO, TODO, EVENT 의 keyword가 등록된다. */
+	@Override
+	public void setKeyword(String objId, List<String> keyword) {
+												
+		try{
+			DaoFactory.getInstance().getSqlDao().setKeyword(objId, keyword);		// postgresql 등록 
+		} catch(Exception e) {
+			System.out.println(e.toString());
+		}
+	}
+	
+	/* 검색한 키워드를 가지고있는 task를 가져온다. */
+	public List<Task> getKeyword(String tags) {
+		
+		List<Task> taskList = new ArrayList<Task>();
+		
+		try{
+			taskList = DaoFactory.getInstance().getSqlDao().getKeyword(tags);
+		} catch(Exception e) {
+			System.out.println(e.toString());
+		}
+		return taskList;
+	}
+	
 }
 

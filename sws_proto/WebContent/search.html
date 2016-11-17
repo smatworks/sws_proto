@@ -1,13 +1,15 @@
-<form name="myForm" novalidate ng-controller="memoCtrl" ng-submit="sendMemo(newMemo)">
-	<div id="memo" class="w3-main" style="margin-left:250px;">
+
+<div id="search" class="w3-main" style="margin-left:250px;">
+
+	<header class="w3-container w3-theme w3-padding-64" style="padding-left:32px">
+		<h1 class="w3-xxxlarge w3-padding-16">This is Search Result Zone...</h1>
+	</header>
 	
-		<header class="w3-container w3-theme w3-padding-64" style="padding-left:32px">
-			<h1 class="w3-xxxlarge w3-padding-16">This is Search Result Zone...</h1>
-		</header>
-	
-		<div class="w3-container w3-padding-32" style="padding-left:32px" ng-repeat="result in searchResult">
-			<span>{{result}}</span>
-			<br>
+	<div class="w3-container w3-padding-32" style="padding-left:32px">
+		<div class="w3-container w3-section w3-border-left w3-pale-yellow w3-border-red" ng-repeat="result in searchResult track by $index">
+		    <p style="padding-top:10px;">title : {{result.title}}</p> <p style="float:right;"></p>
+		    <p>content : {{result.contents}}</p>
+		    <p>tag : {{result.tags}}</p>
 		</div>
 	</div>
-</form>
+</div>

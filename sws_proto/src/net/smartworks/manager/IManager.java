@@ -7,6 +7,7 @@
 package net.smartworks.manager;
 
 import java.util.List;
+import java.util.Map;
 
 import net.smartworks.model.Task;
 import net.smartworks.model.TaskCond;
@@ -22,5 +23,8 @@ public interface IManager {
 	public List<Task> getTasks(String userId, TaskCond cond) throws Exception;
 	
 	public List<Task> findTaskByTag(String userId, String tagStr) throws Exception;
+	
+	public void setKeyword(String objId, List<String> keyword);
+	public List<Task> getKeyword(String tags);
 }
 

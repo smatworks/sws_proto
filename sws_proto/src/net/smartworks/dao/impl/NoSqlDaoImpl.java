@@ -17,6 +17,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import net.smartworks.dao.INoSqlDao;
 import net.smartworks.model.TagIndex;
 
+/* MongoDB DAO */
 public class NoSqlDaoImpl implements INoSqlDao {
 
 	public static final String TAG_METHOD_SET = "set";
