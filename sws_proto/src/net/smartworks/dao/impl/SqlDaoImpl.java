@@ -8,6 +8,7 @@ package net.smartworks.dao.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -358,21 +359,28 @@ public class SqlDaoImpl implements ISqlDao {
 				tableName = "specialletter";																			// 특수문자를 담을 테이블이름 
 			}
 			
-			try {					
+			try {
 				/* 테이블에 같은 keyword가 있을 경우, objId만 update 해준다. */
-				StringBuffer oldObjId = new StringBuffer().append( (String) jdbcTemplateObject.queryForObject("SELECT objId from keyword" + tableName + " where keyword='" + keywords.get(i) + "'", String.class) );
-				oldObjId.append(";" + objId);															
+				flag = false;
+				StringBuffer SQL = new StringBuffer();
+				SQL.append("select * from keyword").append(tableName).append(" where keyword = ?");
+				StringBuffer oldObjId = new StringBuffer().append( (String) jdbcTemplateObject.queryForObject(SQL.toString(), new Object[] { keywords.get(i) }, String.class));
+				oldObjId.append(";" + objId);
 				StringBuffer updateSql = new StringBuffer().append(" UPDATE keyword" + tableName + " SET objId=?");
 				updateSql.append(" WHERE keyword=?");
 				jdbcTemplateObject.update(updateSql.toString() ,oldObjId, keywords.get(i));
 			} catch(BadSqlGrammarException e) {																			// 테이블이 없을 경우 테이블을 새로 생성해준다. 
+				System.out.println(e.toString());
 				flag = true;
 				StringBuffer createTableSql = new StringBuffer().append("CREATE TABLE keyword").append(tableName).append(" (");
 				createTableSql.append(" keyword char(30) not null," );
 				createTableSql.append(" objId character varying(10000) not null) ");					
 				jdbcTemplateObject.execute(createTableSql.toString());
 			} catch(EmptyResultDataAccessException empty) {																// 테이블에 같은 keyword가 없을 경우
+				System.out.println(empty.toString());
 				flag = true;
+			} catch(Exception e) {
+				System.out.println(e.toString());
 			} finally {																									// 새로 생성된 테이블 or 테이블은 이미 존재했지만, keyword가 없었을 경우 insert 해준다 
 				if(flag == true) {
 					StringBuffer attrSql = new StringBuffer().append("INSERT INTO keyword").append(tableName);	
@@ -393,6 +401,7 @@ public class SqlDaoImpl implements ISqlDao {
 		String[] keywords = StringUtils.tokenizeToStringArray(tags, " ");	
 		List<Task> taskList = new ArrayList<Task>();																	// 검색한 결과값 (task 값)
 		List<String> objIdLists = new ArrayList<String>();																// 결과값을 꺼내기위한(task를 꺼내기위한) objId를 담아둠
+		List<Map<String, String>> tableNameAndKeywordList = new ArrayList<Map<String, String>>();
 		
 		for(int i=0; i<keywords.length; i++) {
 			
@@ -414,27 +423,64 @@ public class SqlDaoImpl implements ISqlDao {
 				tableName = "specialletter";																			// 특수문자를 담을 테이블이름 
 			}
 			
-			try {
-				String objIds = (String) jdbcTemplateObject.queryForObject("SELECT objId from keyword" + tableName +  " where keyword='" + keywords[i] + "'", String.class);	// 검색한 키워드를 가지고있는 objId들을 가져온다
-				String[] objIdList = StringUtils.tokenizeToStringArray(objIds, ";");								
-				
-				for(int j=0; j<objIdList.length; j++) {																	// 키워드를 가지고 있는 task들의 objId값을 중복값을 제거하여 담아 놓는다.
-					if(!objIdLists.contains(objIdList[j])) {
-						objIdLists.add(objIdList[j]);
-					}
+			Map<String, String> tableNameAndKeyword = new HashMap<String, String>();									// Map<테이블이름, 키워드> 형식으로 List로 만들어, 나중에 쿼리문을 반복 실행하는것을 방지하기위함. 
+			tableNameAndKeyword.put("tableName", tableName);
+			tableNameAndKeyword.put("keyword", keywords[i]);
+			tableNameAndKeywordList.add(tableNameAndKeyword);
+		}
+		
+		StringBuffer query = new StringBuffer();
+		for(int i=0; i<tableNameAndKeywordList.size(); i++) {															// 검색한 키워드를 가지고 있는 task들의 objId 조회 Query문 생성
+			
+/*			테이블 이름 바뀌기 전 
+			query.append("select objId from ").append(tableNameAndKeywordList.get(i).get("tableName")).append("keyword");
+			query.append(" where keyword=").append("'");
+			query.append(tableNameAndKeywordList.get(i).get("keyword")).append("'");
+			if(i != tableNameAndKeywordList.size()-1) {																	// (마지막 쿼리문 빼고 union 추가)
+				query.append(" union");  
+			}
+*/
+			
+			//테이블 이름 바뀐 후 
+			query.append("select objId from keyword");
+			query.append(tableNameAndKeywordList.get(i).get("tableName"));
+			query.append("where keyword=").append("'");
+			query.append(tableNameAndKeywordList.get(i).get("keyword")).append("'");
+			if(i != tableNameAndKeywordList.size()-1) {																	// (마지막 쿼리문 빼고 union 추가)
+				query.append(" union");  
+			}
+
+		}
+
+		try {
+			String objIds = (String) jdbcTemplateObject.queryForObject(query.toString(), String.class);					// 검색한 키워드를 가지고있는 objId들을 가져온다
+			String[] objIdList = StringUtils.tokenizeToStringArray(objIds, ";");								
+			
+			for(int j=0; j<objIdList.length; j++) {																		// 키워드를 가지고 있는 task들의 objId값을 중복값을 제거하여 담아 놓는다.
+				if(!objIdLists.contains(objIdList[j])) {
+					objIdLists.add(objIdList[j]);
 				}
-			} catch(BadSqlGrammarException e) {																			// 테이블이 없을 경우 
-				System.out.println(e.toString());
-			} catch(EmptyResultDataAccessException empty) {																// 테이블에 같은 keyword가 없을 경우
-				System.out.println(empty.toString());
+			}
+		} catch(BadSqlGrammarException e) {																				// 테이블이 없을 경우 
+			System.out.println(e.toString());
+		} catch(EmptyResultDataAccessException empty) {																	// 테이블에 같은 keyword가 없을 경우
+			System.out.println(empty.toString());
+		} catch(Exception e) {
+			System.out.println(e.toString());
+		}
+		
+		StringBuffer sql = new StringBuffer().append("select * from task where objId in ('");							// 중복 제거된 task들을 꺼내기위한 query문 생성
+		for(int k=0; k<objIdLists.size(); k++) {
+			sql.append(objIdLists.get(k)).append("'");
+			if(k != objIdLists.size()-1) {
+				sql.append(", ").append("'");
+			} else {
+				sql.append(")");
 			}
 		}
 		
-		for(int k=0; k<objIdLists.size(); k++) {																		// 중복 제거된 task들을 꺼낸다
-			String SQL = "SELECT * FROM TASK WHERE OBJID = ?";
-			Task task = jdbcTemplateObject.queryForObject(SQL, new Object[] { objIdLists.get(k) }, new TaskMapper());
-			taskList.add(task);
-		}
+		Object[] setParamsArray = null;
+		taskList = jdbcTemplateObject.query(sql.toString(), setParamsArray ,new TaskMapper());							// 중복 제거된 task들을 꺼낸다
 		return taskList;
 	}
 }
