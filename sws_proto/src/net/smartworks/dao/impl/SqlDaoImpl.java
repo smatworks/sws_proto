@@ -430,43 +430,35 @@ public class SqlDaoImpl implements ISqlDao {
 		}
 		
 		StringBuffer query = new StringBuffer();
-		for(int i=0; i<tableNameAndKeywordList.size(); i++) {															// 검색한 키워드를 가지고 있는 task들의 objId 조회 Query문 생성
+		for(int i=0; i<tableNameAndKeywordList.size(); i++) {																// 검색한 키워드를 가지고 있는 task들의 objId 조회 Query문 생성
 			
-/*			테이블 이름 바뀌기 전 
-			query.append("select objId from ").append(tableNameAndKeywordList.get(i).get("tableName")).append("keyword");
+//			테이블 이름 바뀌기 전 
+/*			query.append("select objId from ").append(tableNameAndKeywordList.get(i).get("tableName")).append("keyword");
 			query.append(" where keyword=").append("'");
 			query.append(tableNameAndKeywordList.get(i).get("keyword")).append("'");
-			if(i != tableNameAndKeywordList.size()-1) {																	// (마지막 쿼리문 빼고 union 추가)
-				query.append(" union");  
-			}
-*/
-			
+*/	
 			//테이블 이름 바뀐 후 
 			query.append("select objId from keyword");
 			query.append(tableNameAndKeywordList.get(i).get("tableName"));
-			query.append("where keyword=").append("'");
+			query.append(" where keyword=").append("'");
 			query.append(tableNameAndKeywordList.get(i).get("keyword")).append("'");
-			if(i != tableNameAndKeywordList.size()-1) {																	// (마지막 쿼리문 빼고 union 추가)
-				query.append(" union");  
-			}
 
-		}
-
-		try {
-			String objIds = (String) jdbcTemplateObject.queryForObject(query.toString(), String.class);					// 검색한 키워드를 가지고있는 objId들을 가져온다
-			String[] objIdList = StringUtils.tokenizeToStringArray(objIds, ";");								
-			
-			for(int j=0; j<objIdList.length; j++) {																		// 키워드를 가지고 있는 task들의 objId값을 중복값을 제거하여 담아 놓는다.
-				if(!objIdLists.contains(objIdList[j])) {
-					objIdLists.add(objIdList[j]);
+			try {
+				String objIds = (String) jdbcTemplateObject.queryForObject(query.toString(), String.class);					// 검색한 키워드를 가지고있는 objId들을 가져온다
+				String[] objIdList = StringUtils.tokenizeToStringArray(objIds, ";");								
+				for(int j=0; j<objIdList.length; j++) {																		// 키워드를 가지고 있는 task들의 objId값을 중복값을 제거하여 담아 놓는다.
+					if(!objIdLists.contains(objIdList[j])) {
+						objIdLists.add(objIdList[j]);
+					}
 				}
+			} catch(BadSqlGrammarException e) {																				// 테이블이 없을 경우 
+				System.out.println(e.toString());
+			} catch(EmptyResultDataAccessException empty) {																	// 테이블에 같은 keyword가 없을 경우
+				System.out.println(empty.toString());
+			} catch(Exception e) {
+				System.out.println(e.toString());
 			}
-		} catch(BadSqlGrammarException e) {																				// 테이블이 없을 경우 
-			System.out.println(e.toString());
-		} catch(EmptyResultDataAccessException empty) {																	// 테이블에 같은 keyword가 없을 경우
-			System.out.println(empty.toString());
-		} catch(Exception e) {
-			System.out.println(e.toString());
+			query.setLength(0);
 		}
 		
 		StringBuffer sql = new StringBuffer().append("select * from task where objId in ('");							// 중복 제거된 task들을 꺼내기위한 query문 생성
