@@ -21,5 +21,6 @@ public class IDCreator {
 	}
 	public static String createShortId(String prefix) {
 		return prefix + "_" + IDGenerator.getInstanceId();
+		
 	}
 }

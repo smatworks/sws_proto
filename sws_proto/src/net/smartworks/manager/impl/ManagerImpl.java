@@ -17,7 +17,6 @@ import org.springframework.util.StringUtils;
 import com.mongodb.util.JSON;
 
 import net.sf.json.JSONObject;
-import net.smartworks.dao.mapper.TaskMapper;
 import net.smartworks.factory.DaoFactory;
 import net.smartworks.manager.IManager;
 import net.smartworks.model.TagIndex;
@@ -283,7 +282,7 @@ public class ManagerImpl implements IManager{
 		try{
 			DaoFactory.getInstance().getSqlDao().setKeyword(objId, keyword);		// postgresql 등록 
 		} catch(Exception e) {
-			System.out.println(e.toString());
+			e.printStackTrace();
 		}
 	}
 	

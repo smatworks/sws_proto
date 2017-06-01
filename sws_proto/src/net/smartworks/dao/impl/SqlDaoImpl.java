@@ -355,8 +355,8 @@ public class SqlDaoImpl implements ISqlDao {
 				} catch(BadSqlGrammarException e) {																		// 테이블이 없을 경우 테이블을 새로 생성해준다. 
 					flag = true;
 					StringBuffer createTableSql = new StringBuffer().append("CREATE TABLE " + firstChar + "keyword (");
-					createTableSql.append(" keyword char(30) not null," );
-					createTableSql.append(" objId character varying(10000) not null) ");					
+					createTableSql.append(" keyword char(100) not null," );
+					createTableSql.append(" objId text) ");					
 					jdbcTemplateObject.execute(createTableSql.toString());
 					
 				} catch(EmptyResultDataAccessException empty) {															// 테이블에 같은 keyword가 없을 경우
@@ -396,8 +396,8 @@ public class SqlDaoImpl implements ISqlDao {
 				} catch(BadSqlGrammarException e) {																		// 테이블이 없을 경우 테이블을 새로 생성해준다. 
 					flag = true;
 					StringBuffer createTableSql = new StringBuffer().append("CREATE TABLE " + tableName + "keyword (");
-					createTableSql.append(" keyword char(30) not null," );
-					createTableSql.append(" objId character varying(10000) not null) ");					
+					createTableSql.append(" keyword char(100) not null," );
+					createTableSql.append(" objId text) ");					
 					jdbcTemplateObject.execute(createTableSql.toString());
 					
 				} catch(EmptyResultDataAccessException empty) {															// 테이블에 같은 keyword가 없을 경우
@@ -434,8 +434,8 @@ public class SqlDaoImpl implements ISqlDao {
 				} catch(BadSqlGrammarException e) {																		// 테이블이 없을 경우 테이블을 새로 생성해준다. 
 					flag = true;
 					StringBuffer createTableSql = new StringBuffer().append("CREATE TABLE " + tableName + "keyword (");
-					createTableSql.append(" keyword char(30) not null," );
-					createTableSql.append(" objId character varying(10000) not null) ");					
+					createTableSql.append(" keyword char(100) not null," );
+					createTableSql.append(" objId text) ");					
 					jdbcTemplateObject.execute(createTableSql.toString());
 					
 				} catch(EmptyResultDataAccessException empty) {															// 테이블에 같은 keyword가 없을 경우
@@ -470,8 +470,8 @@ public class SqlDaoImpl implements ISqlDao {
 				} catch(BadSqlGrammarException e) {																		// 테이블이 없을 경우 테이블을 새로 생성해준다. 
 					flag = true;
 					StringBuffer createTableSql = new StringBuffer().append("CREATE TABLE " + tableName + "keyword (");
-					createTableSql.append(" keyword char(30) not null," );
-					createTableSql.append(" objId character varying(10000) not null) ");					
+					createTableSql.append(" keyword char(100) not null," );
+					createTableSql.append(" objId text) ");					
 					jdbcTemplateObject.execute(createTableSql.toString());
 					
 				} catch(EmptyResultDataAccessException empty) {															// 테이블에 같은 keyword가 없을 경우
@@ -506,8 +506,8 @@ public class SqlDaoImpl implements ISqlDao {
 				} catch(BadSqlGrammarException e) {																		// 테이블이 없을 경우 테이블을 새로 생성해준다. 
 					flag = true;
 					StringBuffer createTableSql = new StringBuffer().append("CREATE TABLE " + tableName + "keyword (");
-					createTableSql.append(" keyword char(30) not null," );
-					createTableSql.append(" objId character varying(10000) not null) ");					
+					createTableSql.append(" keyword char(100) not null," );
+					createTableSql.append(" objId text) ");					
 					jdbcTemplateObject.execute(createTableSql.toString());
 					
 				} catch(EmptyResultDataAccessException empty) {															// 테이블에 같은 keyword가 없을 경우

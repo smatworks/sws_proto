@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.util.StringUtils;
+
 
 /* keyword 관련 작업  */
 public class InsertKeyWordTask {
@@ -17,10 +19,10 @@ public class InsertKeyWordTask {
 
 		/* 키워드 추출 */ 
 		String title = task.getTitle();
-		String[] titles = title.split(" ");												// 공백을 기준으로 split
+		String[] titles = StringUtils.tokenizeToStringArray(title, " ");				// 공백을 기준으로 split
 		
 		String content = task.getContents();											// 공백을 기준으로 split
-		String[] contents = content.split(" ");
+		String[] contents = StringUtils.tokenizeToStringArray(content, " ");
 		
 		SimpleDateFormat transFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");		// 날짜를 String으로 변경 
 		String date = transFormat.format(task.getCreatedDate());
